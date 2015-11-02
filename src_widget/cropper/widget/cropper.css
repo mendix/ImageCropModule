@@ -1,0 +1,12 @@
+.ImageCropper div {
+	z-index: auto !important;
+}
+
+.ImageCropper .jcrop-holder,
+.ImageCropper .jcrop-holder div {
+	z-index: 2 !important;
+}
+
+.ImageCropper div.jcrop-tracker {
+	z-index: 1 !important;
+}

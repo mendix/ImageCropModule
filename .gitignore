@@ -1,0 +1,9 @@
+**/proxies/
+src_module/javasource/com
+src_module/javasource/system
+src_module/deployment/
+src_module/.classpath
+src_module/.project
+*.launch
+*.tmp
+*.lock
