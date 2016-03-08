@@ -7,3 +7,5 @@ src_module/.project
 *.launch
 *.tmp
 *.lock
+
+node_modules/
