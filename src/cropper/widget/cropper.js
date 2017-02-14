@@ -1,7 +1,3 @@
-/*jslint white:true, nomen: true, plusplus: true */
-/*global mx, define, require, browser, devel, console, setTimeout */
-/*mendix */
-
 /**
 	Image Cropper
 	========================
@@ -111,7 +107,7 @@ define([
             dojo.empty(this.domNode);
 
             this.imgNode = dom.create('img', {
-                'src' : '/file?fileID=' + this.fileID + '&' + (+new Date).toString(36)
+                'src' : '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36)
             }); // New date to kill caching
 
             domStyle.set(this.imgNode, {
@@ -127,7 +123,7 @@ define([
             logger.debug('cropper.widget.cropper loadCrop');
             var aspectArr = this.imgObj.get(this.aspectRatio).split(':');
 
-            if (aspectArr == null) {
+            if (aspectArr === null) {
                 aspectArr = "";
             }
 
@@ -195,7 +191,7 @@ define([
                 _jQuery(this.imgNode).Jcrop({
                     onSelect : lang.hitch(this, this.cropOnSelect),
                     bgColor: 'black',
-                    bgOpacity: .4,
+                    bgOpacity: 0.4,
                     setSelect: setSelectArr,
                     aspectRatio: this.aspectR
                 }, function () {
@@ -232,8 +228,9 @@ define([
 
         objectUpdateNotification : function () {
             logger.debug('cropper.widget.cropper objectUpdateNotification');
-            if (this.imgObj !== null)
+            if (this.imgObj !== null) {
                 this.reloadImage();
+            }
         },
 
         objChanged : function (objId) {
