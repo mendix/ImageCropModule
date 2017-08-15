@@ -1,7 +1,3 @@
-/*jslint white:true, nomen: true, plusplus: true */
-/*global mx, define, require, browser, devel, console, setTimeout */
-/*mendix */
-
 /**
 	Image Cropper
 	========================
@@ -17,12 +13,13 @@ define([
 
     'mxui/dom',
     'dojo/dom-style',
+    'dojo/dom-attr',
     'dojo/_base/array',
     'dojo/_base/lang',
 
     'dojo/text!cropper/widget/templates/cropper.html',
     'cropper/lib/jquery_bundle',
-], function (declare, _WidgetBase, _TemplatedMixin, dom, domStyle, dojoArray, lang, widgetTemplate, _jQuery) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, domStyle, domAttr, dojoArray, lang, widgetTemplate, _jQuery) {
     'use strict';
 
     var $ = _jQuery.noConflict(true);
@@ -41,12 +38,12 @@ define([
         scaleRatio : 1,
         _hasStarted : false,
 
+        _c: null,
         _cropApi: null,
 
         startup: function () {
-            //logger.level(logger.DEBUG); // Uncomment to debug
             logger.debug('cropper.widget.cropper startup');
-            if(this._hasStarted) {
+            if (this._hasStarted) {
                 return;
             }
 
@@ -56,11 +53,6 @@ define([
 
         update: function (obj, callback) {
             logger.debug('cropper.widget.cropper update', obj);
-            if (this._handles && this._handles.length && this._handles.length > 0) {
-                dojoArray.forEach(this._handles, function (handle) {
-                    mx.data.unsubscribe(handle);
-                });
-            }
             this._handles = [];
 
             this._mxObj = obj;
@@ -74,14 +66,17 @@ define([
 
         _addSubscriptions: function () {
             logger.debug('cropper.widget.cropper addSubscriptions');
+            this.unsubscribeAll();
             if (!this._mxObj) {
                 return;
             }
-            var subscription = mx.data.subscribe({
+            this.subscribe({
                 guid : this._mxObj.getGuid(),
-                callback : lang.hitch(this, this.reloadImage)
+                callback : lang.hitch(this, function () {
+                    logger.debug(this.id + ".subscription fired _addSubscriptions");
+                    this.reloadImage();
+                })
             });
-            this._handles.push(subscription);
         },
 
         _renderCropper: function () {
@@ -93,11 +88,6 @@ define([
             this.fileID = this._mxObj.get('FileID');
 
             this.constructImageHelper();
-
-            mx.data.subscribe({
-                guid : this._mxObj.getGuid(),
-                callback : this.objChanged
-            });
         },
 
         reloadImage : function () {
@@ -108,26 +98,36 @@ define([
 
         constructImageHelper : function() {
             logger.debug('cropper.widget.cropper constructImageHelper');
-            dojo.empty(this.domNode);
+            var src = '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36);
 
-            this.imgNode = dom.create('img', {
-                'src' : '/file?fileID=' + this.fileID + '&' + (+new Date).toString(36)
-            }); // New date to kill caching
+            if (this.imgNode === null) {
+                dojo.empty(this.domNode);
 
-            domStyle.set(this.imgNode, {
-                'left': '-50000px',
-                'position' : 'absolute'
-            });
+                this.imgNode = dom.create('img', {
+                    'src' : src
+                }); // New date to kill caching
 
-            this.imgNode.onload = lang.hitch(this, this.loadCrop);
-            this.domNode.appendChild(this.imgNode);
+                domStyle.set(this.imgNode, {
+                    'left': '-50000px',
+                    'position' : 'absolute'
+                });
+
+                this.imgNode.onload = lang.hitch(this, this.loadCrop);
+                this.domNode.appendChild(this.imgNode);
+            } else {
+                console.log('set');
+                domAttr.set(this.imgNode, 'src', src);
+                if (this._cropApi) {
+                    this._cropApi.setImage(src);
+                }
+            }
         },
 
         loadCrop : function () {
             logger.debug('cropper.widget.cropper loadCrop');
             var aspectArr = this.imgObj.get(this.aspectRatio).split(':');
 
-            if (aspectArr == null) {
+            if (aspectArr === null) {
                 aspectArr = "";
             }
 
@@ -195,11 +195,12 @@ define([
                 _jQuery(this.imgNode).Jcrop({
                     onSelect : lang.hitch(this, this.cropOnSelect),
                     bgColor: 'black',
-                    bgOpacity: .4,
+                    bgOpacity: 0.4,
                     setSelect: setSelectArr,
                     aspectRatio: this.aspectR
                 }, function () {
                     _this._cropApi = this;
+                    console.log(this);
                 });
             }
             catch (e) {
@@ -209,48 +210,60 @@ define([
 
         cropOnSelect : function (c) {
             logger.debug('cropper.widget.cropper cropOnSelect', c);
-            this.changeObj(c.x, c.x2, c.y, c.y2, c.h, c.w);
+            this.changeObj(c);
         },
 
-        changeObj : function (x, x2, y, y2, h, w) {
+        _changedCrop: function (c) {
+            if (
+                this._c === null ||
+                (this._c.x !== c.x || this._c.x2 !== c.x2 ||
+                this._c.y !== c.y || this._c.y2 !== c.y2 ||
+                this._c.h !== c.h || this._c.w !== c.w)
+            ) {
+                this._c = c;
+                return true;
+            }
+            return false;
+        },
+
+        changeObj : function (c) {
             logger.debug('cropper.widget.cropper changeObj', this.scaleRatio);
-            if (this.imgObj && x < 10000 && x2 < 10000 && y < 10000 && y2 < 10000 && this.scaleRatio > 0) {
-                this.imgObj.set('crop_x1', Math.round(x/this.scaleRatio));
-                this.imgObj.set('crop_x2', Math.round(x2/this.scaleRatio));
-                this.imgObj.set('crop_y1', Math.round(y/this.scaleRatio));
-                this.imgObj.set('crop_y2', Math.round(y2/this.scaleRatio));
-                this.imgObj.set('crop_height', Math.round(h/this.scaleRatio));
-                this.imgObj.set('crop_width', Math.round(w/this.scaleRatio));
-                mx.data.save({
-                    mxobj: this.imgObj,
-                    callback: function () {
-                        logger.debug('cropper.widget.cropper changeObj.save');
-                    }
-                });
+            if (this.imgObj && c.x < 10000 && c.x2 < 10000 && c.y < 10000 && c.y2 < 10000 && this.scaleRatio > 0) {
+                this.imgObj.set('crop_x1', Math.round(c.x/this.scaleRatio));
+                this.imgObj.set('crop_x2', Math.round(c.x2/this.scaleRatio));
+                this.imgObj.set('crop_y1', Math.round(c.y/this.scaleRatio));
+                this.imgObj.set('crop_y2', Math.round(c.y2/this.scaleRatio));
+                this.imgObj.set('crop_height', Math.round(c.h/this.scaleRatio));
+                this.imgObj.set('crop_width', Math.round(c.w/this.scaleRatio));
+                if (this._changedCrop(c)) {
+                    mx.data.commit({
+                        mxobj: this.imgObj,
+                        callback: function () {
+                            logger.debug('cropper.widget.cropper changeObj.commit');
+                        }
+                    }, this);
+                }
             }
         },
 
         objectUpdateNotification : function () {
             logger.debug('cropper.widget.cropper objectUpdateNotification');
-            if (this.imgObj !== null)
+            if (this.imgObj !== null) {
                 this.reloadImage();
+            }
         },
 
         objChanged : function (objId) {
             logger.debug('cropper.widget.cropper objChanged');
             mx.data.get({
                 guid : objId,
-                callback : this.objectUpdateNotification
+                callback : lang.hitch(this, this.objectUpdateNotification)
             }, this);
         },
 
         uninitialize: function () {
             logger.debug('cropper.widget.cropper uninitialize');
-            if (this._handles.length > 0) {
-                dojoArray.forEach(this._handles, function (handle) {
-                    mx.data.unsubscribe(handle);
-                });
-            }
+            this.unsubscribeAll();
         }
 
     });

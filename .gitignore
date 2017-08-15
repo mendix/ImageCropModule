@@ -1,11 +1,21 @@
-**/proxies/
-src_module/javasource/com
-src_module/javasource/system
-src_module/deployment/
-src_module/.classpath
-src_module/.project
+test/javasource/
+test/deployment/
+test/.classpath
+test/.project
+test/theme/
+test/userlib/
+test/.classpath
+test/.project
 *.launch
 *.tmp
 *.lock
+.idea/
+
+dist/
+test/
 
 node_modules/
+.editorconfig
+*DS_Store*
+.vscode/
+*.bak
