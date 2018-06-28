@@ -4,15 +4,12 @@ src_module/.classpath
 src_module/.project
 src_module/theme/
 src_module/userlib/
-src_module/.classpath
-src_module/.project
 *.launch
 *.tmp
 *.lock
 .idea/
 
 dist/
-test/
 
 node_modules/
 .editorconfig
