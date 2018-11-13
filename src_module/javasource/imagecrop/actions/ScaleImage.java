@@ -95,14 +95,14 @@ public class ScaleImage extends CustomJavaAction<Boolean> {
 
 	// BEGIN EXTRA CODE
 	public static String getFormatName(Object o) {
-		try {
-			ImageInputStream iis = ImageIO.createImageInputStream(o);
+		try (ImageInputStream iis = ImageIO.createImageInputStream(o)) 
+		{
 			Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 			if (!iter.hasNext()) {
 				return null;
 			}
 			ImageReader reader = (ImageReader) iter.next();
-			iis.close();
+		
 			String formatName = reader.getFormatName();
 			if (formatName == null)
 				formatName = "jpeg";
