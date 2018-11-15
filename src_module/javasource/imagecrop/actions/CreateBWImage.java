@@ -9,30 +9,22 @@
 
 package imagecrop.actions;
 
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.imageio.ImageIO;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
+import imagecrop.implementation.ImageUtil;
 
-/**
- * 
- */
-public class CreateBWImage extends CustomJavaAction<Boolean>
+public class CreateBWImage extends CustomJavaAction<java.lang.Boolean>
 {
 	private IMendixObject ColorImage;
 	private IMendixObject BWImage;
-	private Long thumbnailWidth;
-	private Long thumbnailHeight;
+	private java.lang.Long thumbnailWidth;
+	private java.lang.Long thumbnailHeight;
 
-	public CreateBWImage(IContext context, IMendixObject ColorImage, IMendixObject BWImage, Long thumbnailWidth, Long thumbnailHeight)
+	public CreateBWImage(IContext context, IMendixObject ColorImage, IMendixObject BWImage, java.lang.Long thumbnailWidth, java.lang.Long thumbnailHeight)
 	{
 		super(context);
 		this.ColorImage = ColorImage;
@@ -42,63 +34,13 @@ public class CreateBWImage extends CustomJavaAction<Boolean>
 	}
 
 	@Override
-	public Boolean executeAction() throws Exception
+	public java.lang.Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
 		InputStream is = null;
 		InputStream stream = null;
 		try {
-			is = Core.getImage(getContext(), this.ColorImage, false);
-			BufferedImage original = ImageIO.read(is);
-//			BufferedImage binarized = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
-
-////			int red;
-//			int newPixel;
-//			int threshold = 230;
-
-//			for (int i = 0; i < original.getWidth(); i++) {
-//				for (int j = 0; j < original.getHeight(); j++) {
-//
-//					// Get pixels
-//					red = new Color(original.getRGB(i, j)).getRed();
-//
-//					int alpha = new Color(original.getRGB(i, j)).getAlpha();
-//
-//					if (red > threshold) {
-//						newPixel = 0;
-//					}
-//					else {
-//						newPixel = 255;
-//					}
-//					newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
-//					binarized.setRGB(i, j, newPixel);
-//				}
-//			}
-			
-//            for (int x = 0; x < original.getWidth(); x++) {
-//                for (int y = 0; y < original.getHeight(); y++) {
-//                    Color color = new Color(original.getRGB(x, y));
-//                    int red = color.getRed();
-//                    int green = color.getGreen();
-//                    int blue = color.getBlue();
-//
-//                    red = green = blue = (int)(red * 0.299 + green * 0.587 + blue * 0.114);
-//                    color = new Color(red, green, blue);
-//                    int rgb = color.getRGB();
-//                    original.setRGB(x, y, rgb);
-//                }
-//            }
-			
-            ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-            op.filter(original, original);
-
-			String formatName = ScaleImage.getFormatName( Core.getImage(getContext(), this.ColorImage, false) );
-			
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			ImageIO.write(original, formatName, os);
-			stream = new ByteArrayInputStream(os.toByteArray());
-			Core.storeImageDocumentContent(getContext(), this.BWImage, stream, 
-					this.thumbnailWidth.intValue(), this.thumbnailHeight.intValue());
+			ImageUtil.processImageBW(this.getContext(), BWImage,  ColorImage,  thumbnailWidth.intValue(), thumbnailHeight.intValue());
 		}
 		catch (IOException e) {
 			Core.getLogger(this.toString()).error(e);
@@ -117,7 +59,7 @@ public class CreateBWImage extends CustomJavaAction<Boolean>
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public String toString()
+	public java.lang.String toString()
 	{
 		return "CreateBWImage";
 	}

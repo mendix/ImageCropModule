@@ -9,30 +9,22 @@
 
 package imagecrop.actions;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
-import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
+import imagecrop.implementation.ImageUtil;
 
-/**
- * 
- */
-public class CropImage extends CustomJavaAction<Boolean> {
+public class CropImage extends CustomJavaAction<java.lang.Boolean>
+{
 	private IMendixObject __cropImgObj;
 	private imagecrop.proxies.CropImage cropImgObj;
-	private Long imageWidth;
-	private Long imageHeight;
-	private Long thumbnailWidth;
-	private Long thumbnailHeight;
+	private java.lang.Long imageWidth;
+	private java.lang.Long imageHeight;
+	private java.lang.Long thumbnailWidth;
+	private java.lang.Long thumbnailHeight;
 
-	public CropImage(IContext context, IMendixObject cropImgObj, Long imageWidth, Long imageHeight, Long thumbnailWidth,
-			Long thumbnailHeight) {
+	public CropImage(IContext context, IMendixObject cropImgObj, java.lang.Long imageWidth, java.lang.Long imageHeight, java.lang.Long thumbnailWidth, java.lang.Long thumbnailHeight)
+	{
 		super(context);
 		this.__cropImgObj = cropImgObj;
 		this.imageWidth = imageWidth;
@@ -42,9 +34,9 @@ public class CropImage extends CustomJavaAction<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction() throws Exception {
-		this.cropImgObj = __cropImgObj == null ? null
-				: imagecrop.proxies.CropImage.initialize(getContext(), __cropImgObj);
+	public java.lang.Boolean executeAction() throws Exception
+	{
+		this.cropImgObj = __cropImgObj == null ? null : imagecrop.proxies.CropImage.initialize(getContext(), __cropImgObj);
 
 		// BEGIN USER CODE
 		int cropHeight = this.imageHeight.intValue();
@@ -67,32 +59,8 @@ public class CropImage extends CustomJavaAction<Boolean> {
 				cropWidth = Math.round(this.cropImgObj.getcrop_width() * ratio);
 			}
 			
-			InputStream is = null;
-			InputStream stream = null;
+			ImageUtil.processImage(this.getContext(), cropImgObj.getMendixObject(),  cropWidth,  cropHeight, thumbnailWidth.intValue(), thumbnailHeight.intValue(), true, x1, y1, x2, y2);
 			
-			try {
-				is = Core.getImage(getContext(), this.cropImgObj.getMendixObject(), false);
-				BufferedImage originalImage = ImageIO.read(is);
-
-				BufferedImage alteredImage = new BufferedImage(cropWidth, cropHeight, BufferedImage.TYPE_INT_RGB);
-				alteredImage.getGraphics().drawImage(originalImage, 0, 0, cropWidth, cropHeight, x1, y1, x2, y2, null);
-
-				String formatName = ScaleImage
-						.getFormatName(Core.getImage(getContext(), this.cropImgObj.getMendixObject(), false));
-
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				ImageIO.write(alteredImage, formatName, os);
-				stream = new ByteArrayInputStream(os.toByteArray());
-				Core.storeImageDocumentContent(getContext(), this.cropImgObj.getMendixObject(), stream,
-						this.thumbnailWidth.intValue(), this.thumbnailHeight.intValue());
-			} catch (IOException e) {
-				Core.getLogger(this.toString()).error(e);
-			} finally {
-				if (is != null)
-					is.close();
-				if (stream != null)
-					stream.close();
-			}
 			return true;
 		} else
 			return false;
@@ -103,7 +71,8 @@ public class CropImage extends CustomJavaAction<Boolean> {
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public String toString() {
+	public java.lang.String toString()
+	{
 		return "CropImage";
 	}
 
