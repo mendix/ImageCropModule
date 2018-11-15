@@ -18,10 +18,7 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 
-/**
- * 
- */
-public class SetInitialImageProps extends CustomJavaAction<Boolean>
+public class SetInitialImageProps extends CustomJavaAction<java.lang.Boolean>
 {
 	private IMendixObject UploadedImage;
 
@@ -32,27 +29,26 @@ public class SetInitialImageProps extends CustomJavaAction<Boolean>
 	}
 
 	@Override
-	public Boolean executeAction() throws Exception
+	public java.lang.Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-		InputStream is;
-		try {
-			is = Core.getImage(getContext(), this.UploadedImage, false);
-			if( is == null )
+		try (InputStream is = Core.getImage(getContext(), this.UploadedImage, false)) 
+		{
+			if( is == null ) {
 				return false;
+			}
+			
+			BufferedImage img = ImageIO.read(is);
+			this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_width.toString(), img.getWidth() );
+			this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_height.toString(), img.getHeight() );
+			this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_x2.toString(), img.getWidth() );
+			this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_y2.toString(), img.getHeight() );
+
+			return true;
 		}
 		catch( Exception e ) {
 			return false;
 		}
-		
-		BufferedImage img = ImageIO.read(is);
-		this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_width.toString(), img.getWidth() );
-		this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_height.toString(), img.getHeight() );
-		this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_x2.toString(), img.getWidth() );
-		this.UploadedImage.setValue(getContext(), CropImage.MemberNames.crop_y2.toString(), img.getHeight() );
-		is.close();
-		
-		return true;
 		// END USER CODE
 	}
 
@@ -60,7 +56,7 @@ public class SetInitialImageProps extends CustomJavaAction<Boolean>
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public String toString()
+	public java.lang.String toString()
 	{
 		return "SetInitialImageProps";
 	}

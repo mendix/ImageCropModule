@@ -9,30 +9,20 @@
 
 package imagecrop.actions;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
+import imagecrop.implementation.ImageUtil;
 
-/**
- * 
- */
-public class ScaleImage extends CustomJavaAction<Boolean> {
+public class ScaleImage extends CustomJavaAction<java.lang.Boolean>
+{
 	private IMendixObject __cropImgObj;
 	private imagecrop.proxies.CropImage cropImgObj;
-	private Long thumbnailWidth;
-	private Long thumbnailHeight;
+	private java.lang.Long thumbnailWidth;
+	private java.lang.Long thumbnailHeight;
 
-	public ScaleImage(IContext context, IMendixObject cropImgObj, Long thumbnailWidth, Long thumbnailHeight) {
+	public ScaleImage(IContext context, IMendixObject cropImgObj, java.lang.Long thumbnailWidth, java.lang.Long thumbnailHeight)
+	{
 		super(context);
 		this.__cropImgObj = cropImgObj;
 		this.thumbnailWidth = thumbnailWidth;
@@ -40,9 +30,9 @@ public class ScaleImage extends CustomJavaAction<Boolean> {
 	}
 
 	@Override
-	public Boolean executeAction() throws Exception {
-		this.cropImgObj = __cropImgObj == null ? null
-				: imagecrop.proxies.CropImage.initialize(getContext(), __cropImgObj);
+	public java.lang.Boolean executeAction() throws Exception
+	{
+		this.cropImgObj = __cropImgObj == null ? null : imagecrop.proxies.CropImage.initialize(getContext(), __cropImgObj);
 
 		// BEGIN USER CODE
 		int x1 = this.cropImgObj.getcrop_x1();
@@ -53,35 +43,14 @@ public class ScaleImage extends CustomJavaAction<Boolean> {
 		if (x2 > 0 && y2 > 0) {
 			int newWidth = x2 - x1, newHeight = y2 - y1;
 			
-			InputStream is = null;
-			InputStream stream = null;
-			
-			try {
-				is = Core.getImage(getContext(), this.cropImgObj.getMendixObject(), false);
-				BufferedImage originalImage = ImageIO.read(is);
-
-				BufferedImage alteredImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
-				alteredImage.getGraphics().drawImage(originalImage, 0, 0, newWidth, newHeight, null);
-
-				String formatName = getFormatName(
-						Core.getImage(getContext(), this.cropImgObj.getMendixObject(), false));
-
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				ImageIO.write(alteredImage, formatName, os);
-				stream = new ByteArrayInputStream(os.toByteArray());
-				Core.storeImageDocumentContent(getContext(), this.cropImgObj.getMendixObject(), stream,
-						this.thumbnailWidth.intValue(), this.thumbnailHeight.intValue());
-			} catch (IOException e) {
-				Core.getLogger(this.toString()).error(e);
-			} finally {
-				if (is != null)
-					is.close();
-				if (stream != null)
-					stream.close();
-			}
+			ImageUtil.processImage(this.getContext(), cropImgObj.getMendixObject(), 
+					newWidth, newHeight, thumbnailWidth.intValue(), thumbnailHeight.intValue(), 
+					false, 0, 0, 0, 0);
+		
 			return true;
-		} else
+		} else {
 			return false;
+		}
 		// END USER CODE
 	}
 
@@ -89,29 +58,12 @@ public class ScaleImage extends CustomJavaAction<Boolean> {
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public String toString() {
+	public java.lang.String toString()
+	{
 		return "ScaleImage";
 	}
 
 	// BEGIN EXTRA CODE
-	public static String getFormatName(Object o) {
-		try {
-			ImageInputStream iis = ImageIO.createImageInputStream(o);
-			Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
-			if (!iter.hasNext()) {
-				return null;
-			}
-			ImageReader reader = (ImageReader) iter.next();
-			iis.close();
-			String formatName = reader.getFormatName();
-			if (formatName == null)
-				formatName = "jpeg";
 
-			return formatName;
-		} catch (IOException e) {
-		}
-
-		return "jpeg";
-	}
 	// END EXTRA CODE
 }
