@@ -17,30 +17,35 @@ import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
 import imagecrop.implementation.ImageUtil;
 
-public class CreateBWImage extends CustomJavaAction<java.lang.Boolean>
+/**
+ * 
+ */
+public class CreateBWImage extends CustomJavaAction<Boolean>
 {
 	private IMendixObject ColorImage;
 	private IMendixObject BWImage;
-	private java.lang.Long thumbnailWidth;
-	private java.lang.Long thumbnailHeight;
+	private Long thumbnailWidth;
+	private Long thumbnailHeight;
+	private java.math.BigDecimal jpegCompressionQuality;
 
-	public CreateBWImage(IContext context, IMendixObject ColorImage, IMendixObject BWImage, java.lang.Long thumbnailWidth, java.lang.Long thumbnailHeight)
+	public CreateBWImage(IContext context, IMendixObject ColorImage, IMendixObject BWImage, Long thumbnailWidth, Long thumbnailHeight, java.math.BigDecimal jpegCompressionQuality)
 	{
 		super(context);
 		this.ColorImage = ColorImage;
 		this.BWImage = BWImage;
 		this.thumbnailWidth = thumbnailWidth;
 		this.thumbnailHeight = thumbnailHeight;
+		this.jpegCompressionQuality = jpegCompressionQuality;
 	}
 
 	@Override
-	public java.lang.Boolean executeAction() throws Exception
+	public Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
 		InputStream is = null;
 		InputStream stream = null;
 		try {
-			ImageUtil.processImageBW(this.getContext(), BWImage,  ColorImage,  thumbnailWidth.intValue(), thumbnailHeight.intValue());
+			ImageUtil.processImageBW(this.getContext(), BWImage,  ColorImage,  thumbnailWidth.intValue(), thumbnailHeight.intValue(), jpegCompressionQuality.floatValue());
 		}
 		catch (IOException e) {
 			Core.getLogger(this.toString()).error(e);
@@ -59,7 +64,7 @@ public class CreateBWImage extends CustomJavaAction<java.lang.Boolean>
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public java.lang.String toString()
+	public String toString()
 	{
 		return "CreateBWImage";
 	}

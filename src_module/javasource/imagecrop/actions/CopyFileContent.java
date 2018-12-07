@@ -14,14 +14,17 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
 
-public class CopyFileContent extends CustomJavaAction<java.lang.Boolean>
+/**
+ * 
+ */
+public class CopyFileContent extends CustomJavaAction<Boolean>
 {
 	private IMendixObject OriginalFile;
 	private IMendixObject TargetFile;
-	private java.lang.Long thumbWidth;
-	private java.lang.Long thumbHeight;
+	private Long thumbWidth;
+	private Long thumbHeight;
 
-	public CopyFileContent(IContext context, IMendixObject OriginalFile, IMendixObject TargetFile, java.lang.Long thumbWidth, java.lang.Long thumbHeight)
+	public CopyFileContent(IContext context, IMendixObject OriginalFile, IMendixObject TargetFile, Long thumbWidth, Long thumbHeight)
 	{
 		super(context);
 		this.OriginalFile = OriginalFile;
@@ -31,7 +34,7 @@ public class CopyFileContent extends CustomJavaAction<java.lang.Boolean>
 	}
 
 	@Override
-	public java.lang.Boolean executeAction() throws Exception
+	public Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
 		Core.storeImageDocumentContent(getContext(), this.TargetFile, Core.getFileDocumentContent(getContext(), this.OriginalFile), this.thumbWidth.intValue(), this.thumbHeight.intValue());
@@ -44,7 +47,7 @@ public class CopyFileContent extends CustomJavaAction<java.lang.Boolean>
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public java.lang.String toString()
+	public String toString()
 	{
 		return "CopyFileContent";
 	}

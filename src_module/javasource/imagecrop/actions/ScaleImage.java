@@ -14,23 +14,28 @@ import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.webui.CustomJavaAction;
 import imagecrop.implementation.ImageUtil;
 
-public class ScaleImage extends CustomJavaAction<java.lang.Boolean>
+/**
+ * 
+ */
+public class ScaleImage extends CustomJavaAction<Boolean>
 {
 	private IMendixObject __cropImgObj;
 	private imagecrop.proxies.CropImage cropImgObj;
-	private java.lang.Long thumbnailWidth;
-	private java.lang.Long thumbnailHeight;
+	private Long thumbnailWidth;
+	private Long thumbnailHeight;
+	private java.math.BigDecimal jpegCompressionQuality;
 
-	public ScaleImage(IContext context, IMendixObject cropImgObj, java.lang.Long thumbnailWidth, java.lang.Long thumbnailHeight)
+	public ScaleImage(IContext context, IMendixObject cropImgObj, Long thumbnailWidth, Long thumbnailHeight, java.math.BigDecimal jpegCompressionQuality)
 	{
 		super(context);
 		this.__cropImgObj = cropImgObj;
 		this.thumbnailWidth = thumbnailWidth;
 		this.thumbnailHeight = thumbnailHeight;
+		this.jpegCompressionQuality = jpegCompressionQuality;
 	}
 
 	@Override
-	public java.lang.Boolean executeAction() throws Exception
+	public Boolean executeAction() throws Exception
 	{
 		this.cropImgObj = __cropImgObj == null ? null : imagecrop.proxies.CropImage.initialize(getContext(), __cropImgObj);
 
@@ -45,7 +50,7 @@ public class ScaleImage extends CustomJavaAction<java.lang.Boolean>
 			
 			ImageUtil.processImage(this.getContext(), cropImgObj.getMendixObject(), 
 					newWidth, newHeight, thumbnailWidth.intValue(), thumbnailHeight.intValue(), 
-					false, 0, 0, 0, 0);
+					false, 0, 0, 0, 0, jpegCompressionQuality.floatValue());
 		
 			return true;
 		} else {
@@ -58,7 +63,7 @@ public class ScaleImage extends CustomJavaAction<java.lang.Boolean>
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public java.lang.String toString()
+	public String toString()
 	{
 		return "ScaleImage";
 	}
