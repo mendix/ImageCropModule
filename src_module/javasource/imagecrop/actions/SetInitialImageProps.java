@@ -18,7 +18,10 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 
-public class SetInitialImageProps extends CustomJavaAction<java.lang.Boolean>
+/**
+ * 
+ */
+public class SetInitialImageProps extends CustomJavaAction<Boolean>
 {
 	private IMendixObject UploadedImage;
 
@@ -29,7 +32,7 @@ public class SetInitialImageProps extends CustomJavaAction<java.lang.Boolean>
 	}
 
 	@Override
-	public java.lang.Boolean executeAction() throws Exception
+	public Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
 		try (InputStream is = Core.getImage(getContext(), this.UploadedImage, false)) 
@@ -56,7 +59,7 @@ public class SetInitialImageProps extends CustomJavaAction<java.lang.Boolean>
 	 * Returns a string representation of this action
 	 */
 	@Override
-	public java.lang.String toString()
+	public String toString()
 	{
 		return "SetInitialImageProps";
 	}
