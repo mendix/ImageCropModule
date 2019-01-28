@@ -12,8 +12,6 @@ import "../node_modules/jquery-jcrop/css/Jcrop.gif";
 import "../node_modules/jquery-jcrop/css/jquery.Jcrop.min.css";
 
 
-import Counter from './Counter';
-
 export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetBase], {
     constructor() {},
     postCreate() {
@@ -21,9 +19,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     },
     update(contextObject, callback) {
         console.debug(`${this.id} >> update`);
-        // Counter({
-        //     dummyKey: this.dummyKey
-        // }, this.domNode);
+
         callback();
     }
 });
