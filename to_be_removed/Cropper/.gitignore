@@ -5,3 +5,5 @@ dist/
 test/*
 !test/widgets
 !test/TestHyperMxWidget.mpr
+
+.mxlocal.config.js
