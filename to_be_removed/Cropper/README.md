@@ -1,0 +1,2 @@
+# Cropper
+Image Cropping Widget
