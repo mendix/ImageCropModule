@@ -4,8 +4,8 @@ import * as widgetConf from '../conf/widget.config.json';
 
 //import dependencies
 import $ from "jquery";
-import jqueryJcrop from "../node_modules/jquery-jcrop/js/jquery.Jcrop";
-import jqueryJColor from "../node_modules/jquery-jcrop/js/jquery.color";
+require('imports-loader?jQuery=jquery!../node_modules/jquery-jcrop/js/jquery.Jcrop');
+require('imports-loader?jQuery=jquery!../node_modules/jquery-jcrop/js/jquery.color');
 
 import './style/style.scss';
 import "../node_modules/jquery-jcrop/css/Jcrop.gif";
@@ -16,10 +16,14 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     constructor() {},
     postCreate() {
         console.debug(`${this.id} >> postCreate`);
+
     },
     update(contextObject, callback) {
         console.debug(`${this.id} >> update`);
-
         callback();
     }
 });
+/**
+ * 
+ * 
+ */
