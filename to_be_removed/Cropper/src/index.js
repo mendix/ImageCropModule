@@ -31,18 +31,20 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     _mxObj: null,
     context: null,
     imgNode: null,
-    imgObj: null,
     fileID: null,
     aspectR: 0,
     scaleRatio: 1,
 
     _c: null,
     _cropApi: null,
-    constructor() {},
+
+
     postCreate() {
         console.debug(`${this.id} >> postCreate`);
         domAttrSet(this.domNode, "tabIndex", -1);
     },
+
+
     update(contextObject, callback) {
         console.debug(`${this.id} >> update`);
         if (contextObject) {
@@ -71,27 +73,23 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     _renderCropper() {
         console.debug(`${this.id} >> _renderCropper`);
-
-        this.imgObj = this._mxObj;
         this.fileID = this._mxObj.get('FileID');
-
-        this.constructImageHelper();
+        this._constructImageHelper();
     },
 
     reloadImage: function () {
         logger.debug('cropper.widget.cropper reloadImage');
         this.scaleRatio = 1;
-        this.constructImageHelper();
+        this._constructImageHelper();
     },
 
-    constructImageHelper: function () {
-        logger.debug('cropper.widget.cropper constructImageHelper');
+    _constructImageHelper() {
+        console.debug(`${this.id} >> _constructImageHelper`);
         var src = '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36);
 
         if (this.imgNode === null) {
-            dojo.empty(this.domNode);
-
-            this.imgNode = dom.create('img', {
+            domEmpty(this.domNode);
+            this.imgNode = domCreate('img', {
                 'src': src
             }); // New date to kill caching
 
@@ -113,7 +111,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     loadCrop: function () {
         logger.debug('cropper.widget.cropper loadCrop');
-        var aspectArr = this.imgObj.get(this.aspectRatio).split(':');
+        var aspectArr = this._mxObj.get(this.aspectRatio).split(':');
 
         if (aspectArr === null) {
             aspectArr = "";
@@ -157,10 +155,10 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         domStyle.set(this.imgNode, 'left', '0px');
         var setSelectArr = [];
         var existingAttrs = [];
-        existingAttrs.push(this.imgObj.get('crop_x1'));
-        existingAttrs.push(this.imgObj.get('crop_y1'));
-        existingAttrs.push(this.imgObj.get('crop_x2'));
-        existingAttrs.push(this.imgObj.get('crop_y2'));
+        existingAttrs.push(this._mxObj.get('crop_x1'));
+        existingAttrs.push(this._mxObj.get('crop_y1'));
+        existingAttrs.push(this._mxObj.get('crop_x2'));
+        existingAttrs.push(this._mxObj.get('crop_y2'));
 
         if (Math.max.apply(Math, existingAttrs) > 0) {
             setSelectArr = existingAttrs;
@@ -215,16 +213,16 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     changeObj: function (c) {
         logger.debug('cropper.widget.cropper changeObj', this.scaleRatio);
-        if (this.imgObj && c.x < 10000 && c.x2 < 10000 && c.y < 10000 && c.y2 < 10000 && this.scaleRatio > 0) {
-            this.imgObj.set('crop_x1', Math.round(c.x / this.scaleRatio));
-            this.imgObj.set('crop_x2', Math.round(c.x2 / this.scaleRatio));
-            this.imgObj.set('crop_y1', Math.round(c.y / this.scaleRatio));
-            this.imgObj.set('crop_y2', Math.round(c.y2 / this.scaleRatio));
-            this.imgObj.set('crop_height', Math.round(c.h / this.scaleRatio));
-            this.imgObj.set('crop_width', Math.round(c.w / this.scaleRatio));
+        if (this._mxObj && c.x < 10000 && c.x2 < 10000 && c.y < 10000 && c.y2 < 10000 && this.scaleRatio > 0) {
+            this._mxObj.set('crop_x1', Math.round(c.x / this.scaleRatio));
+            this._mxObj.set('crop_x2', Math.round(c.x2 / this.scaleRatio));
+            this._mxObj.set('crop_y1', Math.round(c.y / this.scaleRatio));
+            this._mxObj.set('crop_y2', Math.round(c.y2 / this.scaleRatio));
+            this._mxObj.set('crop_height', Math.round(c.h / this.scaleRatio));
+            this._mxObj.set('crop_width', Math.round(c.w / this.scaleRatio));
             if (this._changedCrop(c)) {
                 mx.data.commit({
-                    mxobj: this.imgObj,
+                    mxobj: this._mxObj,
                     callback: function () {
                         logger.debug('cropper.widget.cropper changeObj.commit');
                     }
@@ -235,7 +233,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     objectUpdateNotification: function () {
         logger.debug('cropper.widget.cropper objectUpdateNotification');
-        if (this.imgObj !== null) {
+        if (this._mxObj !== null) {
             this.reloadImage();
         }
     },
