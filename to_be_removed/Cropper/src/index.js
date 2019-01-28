@@ -6,6 +6,10 @@ import {
     set as domAttrSet
 } from 'dojo/dom-attr';
 import {
+    get as domStyleGet,
+    set as domStyleSet
+} from 'dojo/dom-style';
+import {
     create as domCreate,
     place as domPlace,
     empty as domEmpty
@@ -14,7 +18,9 @@ import {
 import {
     hitch
 } from 'dojo/_base/lang';
-
+import {
+    isMxImageObject
+} from "./helpers/utils";
 
 //import dependencies
 import $ from "jquery";
@@ -28,7 +34,7 @@ import "../node_modules/jquery-jcrop/css/jquery.Jcrop.min.css";
 export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetBase], {
 
     // INTERNAL
-    _mxObj: null,
+    _contextObject: null,
     context: null,
     imgNode: null,
     fileID: null,
@@ -36,7 +42,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     scaleRatio: 1,
 
     _c: null,
-    _cropApi: null,
+    JCropAPI: null,
 
 
     postCreate() {
@@ -47,12 +53,14 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     update(contextObject, callback) {
         console.debug(`${this.id} >> update`);
-        if (contextObject) {
-            this._mxObj = contextObject;
-            this._renderCropper();
+        if (contextObject && isMxImageObject(contextObject)) {
+            this._contextObject = contextObject;
+            this.fileID = this._contextObject.get('FileID');
+
+            this._constructImageHelper();
             this._addSubscriptions();
         } else {
-            this._handleError(`${widgetConf.name} should be initiated in a nonempty context object.`);
+            this._handleError(`${widgetConf.name} should be initiated in a nonempty context object that inherits from 'System.Image' Entity.`);
         }
         if (callback && typeof callback === "function") {
             callback();
@@ -63,22 +71,17 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         console.debug(`${this.id} >> _addSubscriptions`);
         this.unsubscribeAll();
         this.subscribe({
-            guid: this._mxObj.getGuid(),
+            guid: this._contextObject.getGuid(),
             callback: hitch(this, () => {
                 console.debug(`${this.id} >> subscription has been set successfully`);
-                this.reloadImage();
+                this._reloadImage();
             })
         });
     },
 
-    _renderCropper() {
-        console.debug(`${this.id} >> _renderCropper`);
-        this.fileID = this._mxObj.get('FileID');
-        this._constructImageHelper();
-    },
 
-    reloadImage: function () {
-        logger.debug('cropper.widget.cropper reloadImage');
+    _reloadImage: function () {
+        console.debug(`${this.id} >> _reloadImage`);
         this.scaleRatio = 1;
         this._constructImageHelper();
     },
@@ -86,111 +89,38 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     _constructImageHelper() {
         console.debug(`${this.id} >> _constructImageHelper`);
         var src = '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36);
-
         if (this.imgNode === null) {
+            console.debug(`${this.id} >> _startLoadingImage`);
             domEmpty(this.domNode);
             this.imgNode = domCreate('img', {
-                'src': src
+                src
             }); // New date to kill caching
-
-            domStyle.set(this.imgNode, {
-                'left': '-50000px',
-                'position': 'absolute'
-            });
-
-            this.imgNode.onload = lang.hitch(this, this.loadCrop);
-            this.domNode.appendChild(this.imgNode);
+            this.imgNode.onload = hitch(this, this._loadCrop);
+            domPlace(this.imgNode, this.domNode);
         } else {
-            console.log('set');
-            domAttr.set(this.imgNode, 'src', src);
-            if (this._cropApi) {
-                this._cropApi.setImage(src);
+            console.debug(`${this.id} >> _reloadImage`);
+            domAttrSet(this.imgNode, 'src', src);
+            if (this.JCropAPI) {
+                this.JCropAPI.setImage(src);
             }
         }
     },
 
-    loadCrop: function () {
-        logger.debug('cropper.widget.cropper loadCrop');
-        var aspectArr = this._mxObj.get(this.aspectRatio).split(':');
-
-        if (aspectArr === null) {
-            aspectArr = "";
-        }
-
-        this.aspectR = 0;
-        if (aspectArr.length === 2) {
-            var a = parseInt(aspectArr[0], 10),
-                b = parseInt(aspectArr[1], 10);
-            this.aspectR = (isNaN(a) ? 0 : a) / (isNaN(b) ? 1 : b);
-        } else {
-            var aR = parseInt(this.aspectRatio, 10);
-            this.aspectR = isNaN(aR) ? 0 : aR;
-        }
-
-        //this.aspectR = (aspectArr.length === 2) ? parseInt(aspectArr[0], 10) / parseInt(aspectArr[1], 10) : parseInt(this.aspectRatio, 10);
-
-        if (this.imgNode.offsetWidth > this.cropwidth || this.imgNode.offsetHeight > this.cropheight) {
-            if (this.imgNode.offsetWidth >= this.imgNode.offsetHeight) {
-                this.scaleRatio = this.cropwidth / this.imgNode.offsetWidth;
-                if (this.scaleRatio === 0) {
-                    this.scaleRatio = 1;
-                }
-                domStyle.set(this.imgNode, {
-                    'width': this.cropwidth + 'px',
-                    'height': this.scaleRatio * this.imgNode.offsetHeight + 'px'
-                });
-            } else {
-                this.scaleRatio = this.cropheight / this.imgNode.offsetHeight;
-                domStyle.set(this.imgNode, {
-                    'width': this.scaleRatio * this.imgNode.offsetWidth + 'px',
-                    'height': this.cropheight + 'px'
-                });
-            }
-        }
-
-        if (this.scaleRatio === 0) {
-            this.scaleRatio = 1;
-        }
-
-        domStyle.set(this.imgNode, 'left', '0px');
-        var setSelectArr = [];
-        var existingAttrs = [];
-        existingAttrs.push(this._mxObj.get('crop_x1'));
-        existingAttrs.push(this._mxObj.get('crop_y1'));
-        existingAttrs.push(this._mxObj.get('crop_x2'));
-        existingAttrs.push(this._mxObj.get('crop_y2'));
-
-        if (Math.max.apply(Math, existingAttrs) > 0) {
-            setSelectArr = existingAttrs;
-        } else if (this.startwidth > 0 && this.startheight > 0) {
-            var width = Math.min(this.startwidth, this.imgNode.offsetWidth);
-            var height = Math.min(this.startheight, this.imgNode.offsetHeight);
-            setSelectArr.push(width);
-            setSelectArr.push(height);
-            setSelectArr.push(0);
-            setSelectArr.push(0);
-            this.changeObj(0, width, 0, height, height, width);
-        } else {
-            setSelectArr = undefined;
-        }
-
-        try {
-            var _this = this;
-            // this._cropApi.destroy();
-            // this._cropApi = null;
-            _jQuery(this.imgNode).Jcrop({
-                onSelect: lang.hitch(this, this.cropOnSelect),
-                bgColor: 'black',
-                bgOpacity: 0.4,
-                setSelect: setSelectArr,
-                aspectRatio: this.aspectR
-            }, function () {
-                _this._cropApi = this;
-                console.log(this);
-            });
-        } catch (e) {
-            logger.warn("Errors while loading JCrop:" + e);
-        }
+    _loadCrop: function () {
+        console.debug(`${this.id} >> _loadCrop`);
+        var widgetSelfRef = this;
+        $(this.imgNode).Jcrop({
+            onSelect: hitch(this, this.cropOnSelect),
+            bgColor: 'black',
+            bgOpacity: 0.4,
+            setSelect: [0, 0, this.startWidth, this.startHeight],
+            aspectRatio: this.aspectR,
+            boxWidth: this.cropwidth,
+            boxHeight: this.cropheight,
+        }, function () {
+            console.debug(`${this.id} >> _getReferenceToJCropInstance`);
+            widgetSelfRef.JCropAPI = this;
+        });
     },
 
     cropOnSelect: function (c) {
@@ -213,16 +143,16 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     changeObj: function (c) {
         logger.debug('cropper.widget.cropper changeObj', this.scaleRatio);
-        if (this._mxObj && c.x < 10000 && c.x2 < 10000 && c.y < 10000 && c.y2 < 10000 && this.scaleRatio > 0) {
-            this._mxObj.set('crop_x1', Math.round(c.x / this.scaleRatio));
-            this._mxObj.set('crop_x2', Math.round(c.x2 / this.scaleRatio));
-            this._mxObj.set('crop_y1', Math.round(c.y / this.scaleRatio));
-            this._mxObj.set('crop_y2', Math.round(c.y2 / this.scaleRatio));
-            this._mxObj.set('crop_height', Math.round(c.h / this.scaleRatio));
-            this._mxObj.set('crop_width', Math.round(c.w / this.scaleRatio));
+        if (this._contextObject && c.x < 10000 && c.x2 < 10000 && c.y < 10000 && c.y2 < 10000 && this.scaleRatio > 0) {
+            this._contextObject.set('crop_x1', Math.round(c.x / this.scaleRatio));
+            this._contextObject.set('crop_x2', Math.round(c.x2 / this.scaleRatio));
+            this._contextObject.set('crop_y1', Math.round(c.y / this.scaleRatio));
+            this._contextObject.set('crop_y2', Math.round(c.y2 / this.scaleRatio));
+            this._contextObject.set('crop_height', Math.round(c.h / this.scaleRatio));
+            this._contextObject.set('crop_width', Math.round(c.w / this.scaleRatio));
             if (this._changedCrop(c)) {
                 mx.data.commit({
-                    mxobj: this._mxObj,
+                    mxobj: this._contextObject,
                     callback: function () {
                         logger.debug('cropper.widget.cropper changeObj.commit');
                     }
@@ -233,8 +163,8 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     objectUpdateNotification: function () {
         logger.debug('cropper.widget.cropper objectUpdateNotification');
-        if (this._mxObj !== null) {
-            this.reloadImage();
+        if (this._contextObject !== null) {
+            this._reloadImage();
         }
     },
 
@@ -242,7 +172,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         logger.debug('cropper.widget.cropper objChanged');
         mx.data.get({
             guid: objId,
-            callback: lang.hitch(this, this.objectUpdateNotification)
+            callback: hitch(this, this.objectUpdateNotification)
         }, this);
     },
 
@@ -250,13 +180,77 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         logger.debug('cropper.widget.cropper uninitialize');
         this.unsubscribeAll();
     },
+
+    _getCroppingOptions() {
+        console.debug(`${this.id} >> _getCroppingOptions`);
+        var options = {};
+        // options.aspectRatio = this._getAspectRation();
+        options.bgColor = 'black';
+        options.bgOpacity = 0.4;
+        // options.onSelect = lang.hitch(this, this._setCroppingCoordinates);
+        // options.onChange = lang.hitch(this, this._setCroppingCoordinates);
+        // options.onRelease = lang.hitch(this, this._setCroppingCoordinates);
+        // options.setSelect = [0, 0, this.startWidth, this.startHeight];
+        options.boxWidth = this.cropwidth;
+        options.boxHeight = this.cropheight;
+
+        return options;
+    },
+
     _handleError(errorMessage) {
+        console.debug(`${this.id} >> _handleError`);
         domEmpty(this.domNode);
         const errorMessageNode = domCreate("div", {
             class: "alert alert-danger",
             innerText: errorMessage
         });
         domPlace(errorMessageNode, this.domNode);
+    },
+
+
+    _setCroppingCoordinates: function (coordinates) {
+        console.debug(`${this.id} >> _setCroppingCoordinates`);
+        if (coordinates) {
+            this._contextObject.set('crop_x1', Math.round(coordinates.x));
+            this._contextObject.set('crop_x2', Math.round(coordinates.x2));
+            this._contextObject.set('crop_y1', Math.round(coordinates.y));
+            this._contextObject.set('crop_y2', Math.round(coordinates.y2));
+            this._contextObject.set('crop_height', Math.round(coordinates.h));
+            this._contextObject.set('crop_width', Math.round(coordinates.w));
+        }
+    },
+
+    _getCroppingOptions: function () {
+        console.debug(`${this.id} >> _getCroppingOptions`);
+        var options = {};
+        options.aspectRatio = this._getAspectRation();
+        options.bgColor = 'black';
+        options.bgOpacity = 0.4;
+        options.onSelect = hitch(this, this._setCroppingCoordinates);
+        options.onChange = hitch(this, this._setCroppingCoordinates);
+        options.onRelease = hitch(this, this._setCroppingCoordinates);
+        options.setSelect = [0, 0, this.startWidth, this.startHeight];
+        options.boxWidth = this.cropwidth;
+        options.boxHeight = this.cropheight;
+
+        return options;
+    },
+
+    _getAspectRation: function () {
+        var aspectRatio = null,
+            aspectRatioArr = null,
+            givenWidth = null,
+            givenHeight = null;
+        if (this.keepOriginalAspectRatio) {
+            aspectRatio = this._originalAspectRatio;
+        } else {
+            aspectRatioArr = this._contextObject.get(this.aspectRatio).split(':');
+            givenWidth = parseInt(aspectRatioArr[0], 10);
+            givenHeight = parseInt(aspectRatioArr[1], 10);
+            aspectRatio = givenWidth / givenHeight;
+        }
+
+        return aspectRatio;
     }
 
 });
