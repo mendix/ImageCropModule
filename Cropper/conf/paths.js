@@ -5,7 +5,7 @@ if (moduleExists(localConfFilePath)) {
 	localConf = require(localConfFilePath);
 }
 // if there is a local conf then use it otherwise use the default/general
-const mxProjectRootDir = localConf && localConf.mxProjectRootDir ? localConf.mxProjectRootDir : "";
+const mxProjectRootDir = localConf && localConf.mxProjectRootDir ? localConf.mxProjectRootDir : path.join(__dirname, "..", "test");
 
 module.exports = {
 	srcDir: path.join(__dirname, '..', 'src'),
