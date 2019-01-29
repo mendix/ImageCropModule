@@ -56,12 +56,17 @@ Start height/width : This is the size the crop selection will start with. You ca
 
 Aspect Ratio : This is the aspect ratio uses for the crop selection. You can set the aspect ratio with an attribute. The aspect ratio should be a text with a semicolon. Common aspect ratios are: 4:3, 16:9, etc. You are free to use any ratio. When you leave the field blank or 0 the user is free to set the aspect ratio.
 
-## Java actions
+## Java actions parameters & configuration:
 
 - **cropImgObj** :  the object (that has the neccessary attributes) to be resized.
 
-- **new Width/Height** : Make sure your newWidth and newHeight match the aspect ratio used in the widget to make sure the image doesn't get transformed. 
+- **new Width/Height** : Make sure your `newWidth` and `newHeight` match the aspect ratio used in the widget to make sure the image doesn't get transformed. 
 
-If you leave either the newWidth or the newHeight on 0, it will scale the image based on the filled in value whilst keeping the aspect ratio. If you set both on 0 it will use the width and height set by the user with the widget. Make sure your newWidth and newHeight match the aspect ratio used in the widget to make sure the image doesn't get transformed. If you leave either the newWidth or the newHeight on 0, it will scale the image based on the filled in value whilst keeping the aspect ratio. If you set both on 0 it will use the width and height set by the user with the widget.
+- If you leave either the `newWidth` or the `newHeigh`t on 0, it will scale the image based on the filled in value whilst keeping the aspect ratio. 
 
-- thumbnail Width/Height : The size of the thumbnail, editable so you can keep this on or near the same aspect ratio as the new image. The default implementation will use the tumbnail size as configured in the constant: ThumbnailSize, unless the image is smaller than the thumbnail. 
+- If you set both on **0** it will use the width and height set by the user with the widget. Make sure your `newWidth` and `newHeight` match the aspect ratio used in the widget to make sure the image doesn't get transformed. 
+- If you leave either the `newWidth` or the `newHeight` on **0**, it will scale the image based on the filled in value whilst keeping the aspect ratio. 
+
+- If you set both on **0** it will use the width and height set by the user with the widget.
+
+- **thumbnail Width/Height** : The size of the thumbnail, editable so you can keep this on or near the same aspect ratio as the new image. The default implementation will use the tumbnail size as configured in the **constant: ThumbnailSize** unless the image is smaller than the thumbnail. 
