@@ -1,0 +1,9 @@
+node_modules/
+build/
+dist/
+
+test/*
+!test/widgets
+!test/TestCrop.mpr
+
+.mxlocal.config.js

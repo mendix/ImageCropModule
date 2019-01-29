@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="<%= NAME %>.widget.<%= NAME %>" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
+    <name><%= FRIENDLY_NAME %></name>
+    <description><%= WIDGET_DESC %></description>
+    <icon>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy
+        ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAnJJREFUeNpi/P//PwMIMIGI4hV3/wME
+        ECNMhKVk9f3/jy4fYwAIILDIuruf/zMxszLcPHOcASzw7NkzsLpPzBIMAAEE1wMD
+        LF++/vi/5+VvBmYWDobJPRs/MvHycDIEKvMx+MmzAeX/Q+x7+vQpWPm/fwwMAAEE
+        NuPu/fv/xMUkGf+BBBkYwRL/gKrj6zZ/YAGpFAZK7n0JEvrP8Ofvf4ZQNV6GlqVb
+        GH7/ZWAEKxAE2gMzFgau3P2B8CMIxLUd/SgtLQ2mQfzXL/995GNnWAAQQBj+QAdM
+        kVVrXn7+8uX/Z6D/PgDx+y8//7/5/PP/y/efwDqZnrz9y96/8TDDvlf/GA68+s8g
+        xMvBIMrHwcDAyIZwAxMjiAR57zfc6H///0KCDkTURnsxFK+6BxIFCxYtvwMMNIj7
+        Wf4hhRxYEsiecAIUqFBHgoMNDSRZSwJVMEJMkBRgmQX0f6lz9iqw//dODeMHsdlZ
+        GRi29ocyAAQYOBxialb3/v3DGP3u21+OLz+xBAaaJZzsDAx8nAzz13WHF4I98frT
+        v+TVrd782f2LGQxkBRjYmf8x/P0PVMXEDw4BMAYSzEBcG+HC8Orjd4bomi2JQK0Q
+        A76BbGViYdDR0mDQtXIAuh81drxlmMH01id/GTpW72P4Cw6t/4hgBAFgImF49voe
+        g+gjDYbf//6Aw/nTz5cMv/7KMDTvegJW8+TuNYbP758z/EfyEgvMi6DALPf3hJrM
+        DMWycIWgoP/0WYjh8Qt2BmT3gQ34D9KNP00xPL56HEy/enAVqNYLHntgA/g5mT7+
+        +/OdH58B0wq8oSwfhj9/fjKwszKCrSSYnAkBAI6BFI36e9AtAAAAAElFTkSuQmCC
+        </icon>
+        <properties>
+              <property key="cropwidth" type="integer" defaultValue="300">
+                  <caption>Max width</caption>
+                  <category>Appearance</category>
+                  <description>The maximum width that the crop screen will stretch to. Use 0 for no maximum width.</description>
+              </property>
+              <property key="cropheight" type="integer" defaultValue="300">
+                  <caption>Max height</caption>
+                  <category>Appearance</category>
+                  <description>The maximum height that the crop screen will stretch to. Use 0 for no maximum height.</description>
+              </property>
+              <property key="aspectRatio" type="attribute">
+                  <caption>Aspect Ratio</caption>
+                  <category>Crop selection</category>
+                  <description>The aspect ratio to enforce on the selection box.</description>
+                <attributeTypes>
+                  <attributeType name="String"/>
+                  <attributeType name="Enum"/>
+                </attributeTypes>
+              </property>
+              <property key="startheight" type="integer" defaultValue="100">
+                  <caption>Start height</caption>
+                  <category>Crop selection</category>
+                  <description>The height the crop selection box will start off at.</description>
+              </property>
+              <property key="startwidth" type="integer" defaultValue="100">
+                  <caption>Start width</caption>
+                  <category>Crop selection</category>
+                  <description>The width the crop selection box will start off at.</description>
+              </property>
+        </properties>
+</widget>

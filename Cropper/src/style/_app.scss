@@ -1,0 +1,9 @@
+.jcrop-mx-widget {
+    .jcrop-holder[style] {
+        z-index: 81 !important;
+    }
+
+    .jcrop-tracker[style] {
+        z-index: 80 !important;
+    }
+}
