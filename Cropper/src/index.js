@@ -2,13 +2,9 @@ import _widgetBase from 'MxWidgetBase';
 import declare from 'dojoBaseDeclare';
 import * as widgetConf from '../conf/widget.config.json';
 import {
-    get as domAttrGet,
     set as domAttrSet
 } from 'dojo/dom-attr';
-import {
-    get as domStyleGet,
-    set as domStyleSet
-} from 'dojo/dom-style';
+
 import {
     create as domCreate,
     place as domPlace,
@@ -99,7 +95,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         var widgetSelfRef = this;
         var cropOptions = this._getCroppingOptions();
         $(this.imgNode).Jcrop(cropOptions, function () {
-            console.debug(`${this.id} >> _getReferenceToJCropInstance`);
+            console.debug(`${widgetSelfRef.id} >> _getReferenceToJCropInstance`);
             widgetSelfRef.JCropAPI = this;
         });
     },
@@ -156,9 +152,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         givenWidth = parseInt(aspectRatioArr[0], 10);
         givenHeight = parseInt(aspectRatioArr[1], 10);
         aspectRatio = givenWidth / givenHeight;
-
         return aspectRatio;
-    },
-
+    }
 
 });
