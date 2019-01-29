@@ -74,3 +74,8 @@ Clicking the button opens a popup and allows the user to change the ratio to a v
 - If you set both on **0** it will use the width and height set by the user with the widget. 
 
 - **thumbnail Width/Height** : The size of the thumbnail, editable so you can keep this on or near the same aspect ratio as the new image. The default implementation will use the tumbnail size as configured in the **Configuration/ThumbnailSize** unless the image is smaller than the thumbnail. 
+
+
+## Issues
+
+If you encounter any issue while using this module/widget, yopu can report it [here](https://github.com/mendix/ImageCropModule/issues/new).
