@@ -3,23 +3,29 @@ This module can transform images based on a selection made in the browser.
 
 ## Typical usage scenario
 
-Allow users to resize and alter their own images.
-Allow users to shrink or convert their images.
-Enforcing a set size/aspect ratio or allowing the user control it.
+- Allow users to resize and alter their own images.
+
+- Allow users to shrink or convert their images.
+
+- Enforcing a set size/aspect ratio or allowing the user control it.
 
 ## Configuration 
 
-The module is pre-configured to use the ImageCrop entity, you can choose to inherit from this entity, set an association to the entity or copy the actions you want to have. 
+- The module is pre-configured to use the ImageCrop entity, you can choose to inherit from this entity, set an association to the entity or copy the actions you want to have. 
 
-The imagecrop widget and Java actions are compatible with any subclass of System.Image, as long as all the "crop_" are available with identical names. 
+- The imagecrop widget and Java actions are compatible with any subclass of System.Image, as long as all the "crop_" are available with identical names. 
 
-Once you have decided on the entities and relationships in the domain models, you can either use the existing pages or use your own pages.
+- Once you have decided on the entities and relationships in the domain models, you can either use the existing pages or use your own pages.
 
 ## Default functionality
 
-The CropImage_Overview, allows you to upload new images using a simple new/edit button
-After uploading the image you can 'edit' the image. Pressing the button 'Edit Image' will create a new 'draft' copy of the original image and opens page: CropImage_Crop
-The page 'CropImage_Crop' allows you to edit the (draft) image. 
+The `CropImage_Overview` snippet allows you to upload new images using a simple new/edit button.
+
+After uploading the image you can edit the image. Pressing the button `Edit Image` will create a new **draft** copy of the original image and opens page `CropImage_Crop`.
+
+The page `CropImage_Crop` allows you to edit the draft image.
+
+
 'Crop', changes the image. This will crop the area outside the box.
 'Resize', changes the image to the size of the selection box.
 'Grayscale', converts the image to an image in black/white (grayscale)
