@@ -55,7 +55,7 @@ Clicking the button opens a popup and allows the user to change the ratio to a v
 
 > If both **Max width** and **Max height** are set to **0** the cropping viewport will be set to the true/natural image size.
 
-**IMPORTANT NOTE: When dealing with large images it is recommended to set at least one of teh above mentioned properties.**
+**IMPORTANT NOTE: When dealing with large images it is recommended to set at least one of the above mentioned properties.**
 
 - **Start height**: The initial height of the cropping window.
 
@@ -67,13 +67,10 @@ Clicking the button opens a popup and allows the user to change the ratio to a v
 
 - **cropImgObj** :  the object (that has the neccessary attributes) to be resized.
 
-- **new Width/Height** : Make sure your `newWidth` and `newHeight` match the aspect ratio used in the widget to make sure the image doesn't get transformed. 
+- **new Width/Height** : Make sure your `newWidth` and `newHeight` match the aspect ratio used in the widget to make sure the image doesn't get transformed inconsistently.
 
-- If you leave either the `newWidth` or the `newHeigh`t on **0**, it will scale the image based on the filled in value whilst keeping the aspect ratio. 
+- If you set either the `newWidth` or the `newHeight` to **0**, it will scale the image based on the filled in value whilst keeping the aspect ratio. 
 
-- If you set both on **0** it will use the width and height set by the user with the widget. Make sure your `newWidth` and `newHeight` match the aspect ratio used in the widget to make sure the image doesn't get transformed. 
-- If you leave either the `newWidth` or the `newHeight` on **0**, it will scale the image based on the filled in value whilst keeping the aspect ratio. 
-
-- If you set both on **0** it will use the width and height set by the user with the widget.
+- If you set both on **0** it will use the width and height set by the user with the widget. 
 
 - **thumbnail Width/Height** : The size of the thumbnail, editable so you can keep this on or near the same aspect ratio as the new image. The default implementation will use the tumbnail size as configured in the **ThumbnailSize** unless the image is smaller than the thumbnail. 
