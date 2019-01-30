@@ -41,6 +41,11 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         logger.debug(`${this.id} >> postCreate`);
         $(this.domNode).addClass("jcrop-mx-widget");
         domAttrSet(this.domNode, "tabIndex", -1);
+
+        this.JCropAPI = null;
+        this.addOnDestroy(() => {
+            this.JCropAPI && this.JCropAPI.destroy && this.JCropAPI.destroy();
+        });
     },
 
     update(contextObject, callback) {
@@ -86,10 +91,12 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     _initJCrop(callback) {
         logger.debug(`${this.id} >> _initJCrop`);
-        if (this.JCropAPI) {
+        if (this.JCropAPI !== null && this.JCropAPI.destroy) {
             // destroy current JCrop instance, in order to reset
             this.JCropAPI.destroy();
+            this.JCropAPI = null;
         }
+
         var widget = this;
         var cropOptions = this._getCroppingOptions();
 
