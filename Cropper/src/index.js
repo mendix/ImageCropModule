@@ -2,19 +2,6 @@ import _widgetBase from 'MxWidgetBase';
 import declare from 'dojoBaseDeclare';
 import * as widgetConf from '../conf/widget.config.json';
 import {
-    set as domAttrSet
-} from 'dojo/dom-attr';
-
-import {
-    create as domCreate,
-    place as domPlace,
-    empty as domEmpty
-} from 'dojo/dom-construct';
-
-import {
-    hitch
-} from 'dojo/_base/lang';
-import {
     isMxImageObject
 } from "./helpers/utils";
 
@@ -40,7 +27,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     postCreate() {
         logger.debug(`${this.id} >> postCreate`);
         $(this.domNode).addClass("jcrop-mx-widget");
-        domAttrSet(this.domNode, "tabIndex", -1);
+        $(this.domNode).attr("tabIndex", -1);
 
         this.JCropAPI = null;
         this.addOnDestroy(() => {
@@ -67,10 +54,10 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         this.unsubscribeAll();
         this.subscribe({
             guid: this._contextObject.getGuid(),
-            callback: hitch(this, () => {
+            callback: $.proxy(() => {
                 logger.debug(`${this.id} >> subscription has been set successfully`);
                 this._updateRendering();
-            })
+            }, this)
         });
     },
 
@@ -78,13 +65,11 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         logger.debug(`${this.id} >> _updateRendering`);
         var src = '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36);
         if (this.imgNode === null) {
-            domEmpty(this.domNode);
-            this.imgNode = domCreate('img', {
-                src
-            });
-            domPlace(this.imgNode, this.domNode);
+            $(this.domNode).empty();
+            this.imgNode = $("<img>").attr("src", src).css("display", "none");
+            $(this.imgNode).appendTo(this.domNode);
         } else {
-            domAttrSet(this.imgNode, 'src', src);
+            $(this.imgNode).attr("src", src);
         }
         this._initJCrop(callback);
     },
@@ -109,12 +94,8 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     _handleError(errorMessage) {
         logger.debug(`${this.id} >> _handleError`);
-        domEmpty(this.domNode);
-        const errorMessageNode = domCreate("div", {
-            class: "alert alert-danger",
-            innerText: errorMessage
-        });
-        domPlace(errorMessageNode, this.domNode);
+        $(this.domNode).empty();
+        $("<div>").addClass("alert alert-danger").text(errorMessage).appendTo(this.domNode);
     },
 
     _setCroppingCoordinates(coordinates) {
@@ -135,9 +116,9 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         options.aspectRatio = this._getAspectRatio();
         options.bgColor = 'black';
         options.bgOpacity = 0.4;
-        options.onSelect = hitch(this, this._setCroppingCoordinates);
-        options.onChange = hitch(this, this._setCroppingCoordinates);
-        options.onRelease = hitch(this, this._setCroppingCoordinates);
+        options.onSelect = $.proxy(this._setCroppingCoordinates, this);
+        options.onChange = $.proxy(this._setCroppingCoordinates, this);
+        options.onRelease = $.proxy(this._setCroppingCoordinates, this);
         options.setSelect = [0, 0, this.startwidth, this.startheight];
         options.boxWidth = this.cropwidth;
         options.boxHeight = this.cropheight;
@@ -156,6 +137,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         aspectRatio = givenWidth / givenHeight;
         return aspectRatio;
     },
+
     _executeCallback(callback) {
         if (callback && typeof callback === "function") {
             callback();
