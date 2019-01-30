@@ -23,8 +23,8 @@ import $ from "jquery";
 require('imports-loader?jQuery=jquery!../node_modules/jquery-jcrop/js/jquery.Jcrop');
 require('imports-loader?jQuery=jquery!../node_modules/jquery-jcrop/js/jquery.color');
 import './style/style.scss';
-import "../node_modules/jquery-jcrop/css/Jcrop.gif";
-import "../node_modules/jquery-jcrop/css/jquery.Jcrop.min.css";
+import "jquery-jcrop/css/Jcrop.gif";
+import "jquery-jcrop/css/jquery.Jcrop.min.css";
 
 
 export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetBase], {
