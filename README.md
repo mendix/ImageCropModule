@@ -49,7 +49,7 @@ Clicking the button opens a popup and allows the user to change the ratio to a v
 
 ### Widget properties:
 
-- ***Max width**: The maximum width that cropping viewport will stretch to. Use **0** for no maximum width.
+- **Max width**: The maximum width that cropping viewport will stretch to. Use **0** for no maximum width.
 
 - **Max height**: The maximum height that cropping viewport will stretch to. Use **0** for no maximum height.
 
