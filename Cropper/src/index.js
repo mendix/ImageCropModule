@@ -101,7 +101,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         var cropOptions = this._getCroppingOptions();
 
         $(this.imgNode).Jcrop(cropOptions, function () {
-            logger.debug(`${widgetSelfRef.id} >> _getReferenceToJCropInstance`);
+            logger.debug(`${widget.id} >> _getReferenceToJCropInstance`);
             widget.JCropAPI = this;
             widget._executeCallback(callback);
         });
