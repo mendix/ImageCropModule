@@ -49,13 +49,11 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         if (contextObject && isMxImageObject(contextObject)) {
             this._contextObject = contextObject;
             this.fileID = this._contextObject.get('FileID');
-            this._updateRendering();
+            this._updateRendering(callback);
             this._addSubscriptions();
         } else {
             this._handleError(`${widgetConf.name} should be initiated in a nonempty context object that inherits from 'System.Image' Entity.`);
-        }
-        if (callback && typeof callback === "function") {
-            callback();
+            this._executeCallback(callback);
         }
     },
 
@@ -71,7 +69,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         });
     },
 
-    _updateRendering() {
+    _updateRendering(callback) {
         logger.debug(`${this.id} >> _updateRendering`);
         var src = '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36);
         if (this.imgNode === null) {
@@ -83,20 +81,22 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         } else {
             domAttrSet(this.imgNode, 'src', src);
         }
+        this._initJCrop(callback);
+    },
+
+    _initJCrop(callback) {
+        logger.debug(`${this.id} >> _initJCrop`);
         if (this.JCropAPI) {
             // destroy current JCrop instance, in order to reset
             this.JCropAPI.destroy();
         }
-        this._initJCrop();
-    },
-
-    _initJCrop() {
-        logger.debug(`${this.id} >> _initJCrop`);
-        var widgetSelfRef = this;
+        var widget = this;
         var cropOptions = this._getCroppingOptions();
+
         $(this.imgNode).Jcrop(cropOptions, function () {
             logger.debug(`${widgetSelfRef.id} >> _getReferenceToJCropInstance`);
-            widgetSelfRef.JCropAPI = this;
+            widget.JCropAPI = this;
+            widget._executeCallback(callback);
         });
     },
 
@@ -153,6 +153,11 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         givenHeight = parseInt(aspectRatioArr[1], 10);
         aspectRatio = givenWidth / givenHeight;
         return aspectRatio;
+    },
+    _executeCallback(callback) {
+        if (callback && typeof callback === "function") {
+            callback();
+        }
     }
 
 });
