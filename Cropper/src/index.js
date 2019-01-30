@@ -100,11 +100,6 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         });
     },
 
-    uninitialize() {
-        logger.debug('cropper.widget.cropper uninitialize');
-        this.unsubscribeAll();
-    },
-
     _handleError(errorMessage) {
         logger.debug(`${this.id} >> _handleError`);
         domEmpty(this.domNode);
