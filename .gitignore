@@ -4,6 +4,12 @@ src_module/.classpath
 src_module/.project
 src_module/theme/
 src_module/userlib/
+
+testProject-8.0/deployment/
+testProject-8.0/.classpath
+testProject-8.0/.project
+testProject-8.0/theme/
+testProject-8.0/userlib/
 *.launch
 *.tmp
 *.lock
