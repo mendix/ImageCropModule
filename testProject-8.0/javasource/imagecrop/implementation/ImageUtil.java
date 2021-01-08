@@ -51,8 +51,8 @@ public class ImageUtil {
 		{
 			BufferedImage originalImage = ImageIO.read(is);
 			Integer imageType = (originalImage.getColorModel().hasAlpha()) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-			BufferedImage alteredImage = new BufferedImage(width, height, imageType;
-			
+			BufferedImage alteredImage = new BufferedImage(width, height, imageType);
+
 			if (crop) {
 				alteredImage.getGraphics().drawImage(originalImage, 0, 0, width, height, x1, y1, x2, y2, null);
 			} else 
