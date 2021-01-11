@@ -31,7 +31,8 @@ public class ImageUtil {
 		try ( InputStream is = Core.getImage(context, colorImageObj, false) )
 		{
 			BufferedImage originalImage = ImageIO.read(is);
-			BufferedImage alteredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Integer imageType = (originalImage.getColorModel().hasAlpha()) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+			BufferedImage alteredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), imageType);
 			
 	        ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 	        op.filter(originalImage, alteredImage);
@@ -49,8 +50,9 @@ public class ImageUtil {
 		try ( InputStream is = Core.getImage(context, imageObj, false) ) 
 		{
 			BufferedImage originalImage = ImageIO.read(is);
-			BufferedImage alteredImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			
+			Integer imageType = (originalImage.getColorModel().hasAlpha()) ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+			BufferedImage alteredImage = new BufferedImage(width, height, imageType);
+
 			if (crop) {
 				alteredImage.getGraphics().drawImage(originalImage, 0, 0, width, height, x1, y1, x2, y2, null);
 			} else 
