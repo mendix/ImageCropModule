@@ -114,7 +114,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         logger.debug(`${this.id} >> _getCroppingOptions`);
         var options = {};
         options.aspectRatio = this._getAspectRatio();
-        options.bgColor = 'black';
+        options.bgColor = 'transparent';
         options.bgOpacity = 0.4;
         options.onSelect = $.proxy(this._setCroppingCoordinates, this);
         options.onChange = $.proxy(this._setCroppingCoordinates, this);
