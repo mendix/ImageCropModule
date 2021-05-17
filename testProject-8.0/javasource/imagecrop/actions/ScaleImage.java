@@ -37,6 +37,10 @@ public class ScaleImage extends CustomJavaAction<java.lang.Boolean>
 		this.cropImgObj = __cropImgObj == null ? null : imagecrop.proxies.CropImage.initialize(getContext(), __cropImgObj);
 
 		// BEGIN USER CODE
+		if (this.cropImgObj == null) {
+			return false;
+		}
+
 		int x1 = this.cropImgObj.getcrop_x1();
 		int x2 = this.cropImgObj.getcrop_x2();
 		int y1 = this.cropImgObj.getcrop_y1();
