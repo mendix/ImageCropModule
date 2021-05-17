@@ -47,6 +47,10 @@ public class CropImage extends CustomJavaAction<Boolean>
 		int cropHeight = this.imageHeight.intValue();
 		int cropWidth = this.imageWidth.intValue();
 
+		if (this.cropImgObj == null) {
+			return false;
+		}
+
 		int x1 = this.cropImgObj.getcrop_x1();
 		int y1 = this.cropImgObj.getcrop_y1();
 		int x2 = this.cropImgObj.getcrop_x2();

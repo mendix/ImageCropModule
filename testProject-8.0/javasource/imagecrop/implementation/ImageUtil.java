@@ -94,6 +94,10 @@ public class ImageUtil {
 	private static void write(	IContext context, IMendixObject imageObj, BufferedImage alteredImage, String formatName, 
 								int thumbnailWidth, int thumbnailHeight, float jpegCompressionQuality) throws IOException 
 	{
+		if (formatName == null) {
+			throw new IOException("Image format could not be identified. Please try again");
+		}
+
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		
 

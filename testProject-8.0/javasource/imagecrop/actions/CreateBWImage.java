@@ -39,18 +39,10 @@ public class CreateBWImage extends CustomJavaAction<java.lang.Boolean>
 	public java.lang.Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-		InputStream is = null;
-		InputStream stream = null;
 		try {
-			ImageUtil.processImageBW(this.getContext(), BWImage,  ColorImage,  thumbnailWidth.intValue(), thumbnailHeight.intValue(), jpegCompressionQuality.floatValue());
-		}
-		catch (IOException e) {
+			ImageUtil.processImageBW(this.getContext(), BWImage, ColorImage, thumbnailWidth.intValue(), thumbnailHeight.intValue(), jpegCompressionQuality.floatValue());
+		} catch (IOException e) {
 			Core.getLogger(this.toString()).error(e);
-		} finally {
-			if (is != null)
-				is.close();
-			if (stream != null)
-				stream.close();
 		}
 
 		return true;
