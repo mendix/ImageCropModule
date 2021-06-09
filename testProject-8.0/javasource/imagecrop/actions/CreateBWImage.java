@@ -10,7 +10,6 @@
 package imagecrop.actions;
 
 import java.io.IOException;
-import java.io.InputStream;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
