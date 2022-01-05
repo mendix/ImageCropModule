@@ -25,7 +25,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     JCropAPI: null,
 
     postCreate() {
-        logger.debug(`${this.id} >> postCreate`);
+        mx.logger.debug(`${this.id} >> postCreate`);
         $(this.domNode).addClass("jcrop-mx-widget");
         $(this.domNode).attr("tabIndex", -1);
 
@@ -36,7 +36,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     },
 
     update(contextObject, callback) {
-        logger.debug(`${this.id} >> update`);
+        mx.logger.debug(`${this.id} >> update`);
 
         if (contextObject && isMxImageObject(contextObject)) {
             this._contextObject = contextObject;
@@ -50,19 +50,19 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     },
 
     _addSubscriptions() {
-        logger.debug(`${this.id} >> _addSubscriptions`);
+        mx.logger.debug(`${this.id} >> _addSubscriptions`);
         this.unsubscribeAll();
         this.subscribe({
             guid: this._contextObject.getGuid(),
             callback: $.proxy(() => {
-                logger.debug(`${this.id} >> subscription has been set successfully`);
+                mx.logger.debug(`${this.id} >> subscription has been set successfully`);
                 this._updateRendering();
             }, this)
         });
     },
 
     _updateRendering(callback) {
-        logger.debug(`${this.id} >> _updateRendering`);
+        mx.logger.debug(`${this.id} >> _updateRendering`);
         var src = '/file?fileID=' + this.fileID + '&' + (+new Date()).toString(36);
         if (this.imgNode === null) {
             $(this.domNode).empty();
@@ -75,7 +75,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
     },
 
     _initJCrop(callback) {
-        logger.debug(`${this.id} >> _initJCrop`);
+        mx.logger.debug(`${this.id} >> _initJCrop`);
         if (this.JCropAPI !== null && this.JCropAPI.destroy) {
             // destroy current JCrop instance, in order to reset
             this.JCropAPI.destroy();
@@ -86,20 +86,20 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         var cropOptions = this._getCroppingOptions();
 
         $(this.imgNode).Jcrop(cropOptions, function () {
-            logger.debug(`${widget.id} >> _getReferenceToJCropInstance`);
+            mx.logger.debug(`${widget.id} >> _getReferenceToJCropInstance`);
             widget.JCropAPI = this;
             widget._executeCallback(callback);
         });
     },
 
     _handleError(errorMessage) {
-        logger.debug(`${this.id} >> _handleError`);
+        mx.logger.debug(`${this.id} >> _handleError`);
         $(this.domNode).empty();
         $("<div>").addClass("alert alert-danger").text(errorMessage).appendTo(this.domNode);
     },
 
     _setCroppingCoordinates(coordinates) {
-        logger.debug(`${this.id} >> _setCroppingCoordinates`);
+        mx.logger.debug(`${this.id} >> _setCroppingCoordinates`);
         if (coordinates) {
             this._contextObject.set('crop_x1', Math.round(coordinates.x));
             this._contextObject.set('crop_x2', Math.round(coordinates.x2));
@@ -111,7 +111,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
 
     },
     _getCroppingOptions() {
-        logger.debug(`${this.id} >> _getCroppingOptions`);
+        mx.logger.debug(`${this.id} >> _getCroppingOptions`);
         var options = {};
         options.aspectRatio = this._getAspectRatio();
         options.bgColor = 'transparent';
@@ -126,7 +126,7 @@ export default declare(`${widgetConf.name}.widget.${widgetConf.name}`, [_widgetB
         return options;
     },
     _getAspectRatio() {
-        logger.debug(`${this.id} >> _getAspectRatio`);
+        mx.logger.debug(`${this.id} >> _getAspectRatio`);
         var aspectRatio = null,
             aspectRatioArr = null,
             givenWidth = null,
