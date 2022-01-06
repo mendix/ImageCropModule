@@ -1,6 +1,6 @@
 {
   "name": "cropper",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Image Cropping Widget",
   "main": "index.js",
   "scripts": {
