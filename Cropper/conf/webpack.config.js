@@ -5,6 +5,7 @@ const ArchivePlugin = require('webpack-archive-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs-extra');
+const pkg = require("../package.json");
 
 const MODES = {
     DEV: 'development',
@@ -21,7 +22,8 @@ const widgetXMLFiles = [
         template: paths.widgetPackageXML,
         filename: `package.xml`,
         data: {
-            NAME: widgetConf.name
+            NAME: widgetConf.name,
+            VERSION: pkg.version
         }
     },
     {

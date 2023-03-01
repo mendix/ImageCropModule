@@ -1,0 +1,5 @@
+* text=auto
+**/javasource/**/*.java text eol=crlf
+**/javascriptsource/**/*.js text eol=crlf
+*.mpr binary
+*.mpk binary
