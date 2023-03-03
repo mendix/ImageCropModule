@@ -3,6 +3,10 @@
     "version": "4.0.6",
     "description": "Image Cropping Widget",
     "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mendix/ImageCropModule.git"
+    },
     "scripts": {
         "dev": "cross-env MODE=development webpack --config conf/webpack.config.js",
         "build": "cross-env MODE=production webpack --config conf/webpack.config.js"
