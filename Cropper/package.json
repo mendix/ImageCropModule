@@ -51,7 +51,7 @@
         "xml-webpack-plugin": "0.0.2"
     },
     "dependencies": {
-        "jquery": "^3.5.0",
+        "jquery": "^3.7.1",
         "jquery-jcrop": "^0.9.13"
     }
 }
